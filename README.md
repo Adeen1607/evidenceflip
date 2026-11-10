@@ -1,26 +1,97 @@
-# EvidenceFlip | DATA INTEGRITY for AI Evidence
+# EvidenceFlip
 
-**DATA INTEGRITY** is the central focus: traceable evidence, verifiable source files, and counterfactual evaluation of AI answers.
+**A research-oriented RAG workbench for retrieval, grounded generation, and evidence interventions.**
 
-EvidenceFlip tests whether a retrieval-augmented generation (RAG) assistant responds appropriately when evidence is changed, removed, or left untouched as a negative control.
+EvidenceFlip lets you load a documented source corpus, ask a locally running language model questions about it, inspect exactly which passages were retrieved, and run controlled experiments to see how answers react when evidence changes. It combines a working RAG reference implementation with an evaluation harness rather than presenting a static chat mockup as an AI product.
 
-## How it works
+> **Development preview.** Research examples are project-authored synthetic fixtures, not model training documents, licensed third-party articles, or proof of published scientific performance. The public portfolio launch is deliberately frozen until the 20-day development period is complete and the owner approves release.
 
-1. Register evidence documents in `sources/` with metadata and SHA-256 fingerprints.
-2. Verify that the documents match their registered fingerprints.
-3. Ask an AI assistant a question with the original evidence.
-4. Replace or remove one document while keeping the question unchanged.
-5. Evaluate answer changes, citation IDs, and predefined expectations.
-6. Record an auditable report for review.
+## What works now
 
-**Important:** This evaluates evidence sensitivity and source-file integrity, not whether a model's hidden training corpus is accurate or whether a citation necessarily supports a claim. Example source documents are synthetic retrieval-time fixtures, not claimed training data.
+| Layer | Implementation | What is verified |
+| --- | --- | --- |
+| Source registry | UTF-8 source files, provenance metadata, SHA-256 checks | Tampering, duplicates, and unsafe paths rejected |
+| Ingestion | Word-window chunking with configurable overlap | Stable source and chunk identifiers |
+| Retrieval | Inspectable BM25 lexical ranking | Labeled synthetic Hit@k and MRR@k |
+| Generation | Local Ollama /api/chat adapter | HTTP contract tested with mocked responses |
+| Attribution | Generated answer plus retrieved excerpts and citation identifiers | Unknown source IDs are flagged, not filtered |
+| Interventions | Reindex from supplied evidence for each experimental scenario | Replacement and removal reach the generator |
+| CI | Python compatibility checks and source verification | No Pages deployment in the prelaunch workflow |
 
-## Local project
+No new foundation-model weights are trained or bundled. RAG uses an existing local language model, such as a model pulled through Ollama. The Python retrieval and benchmarking implementation has **no mandatory external dependencies**.
 
-The full Python framework, tests, examples, documentation, and interactive demonstration are being transferred into this repository. Until all files are present, use the previously supplied project archive for local execution.
+## Quick start: see real retrieval (no model required)
 
-## Interview summary
+Python 3.10+:
 
-> I built EvidenceFlip, a DATA INTEGRITY framework for evidence-grounded AI systems. It registers and fingerprints source documents, performs controlled counterfactual interventions, and checks whether model answers and citations behave as expected. The objective is reproducible and auditable evaluation of RAG systems.
+\`\`\`bash
+git clone https://github.com/Adeen1607/evidenceflip.git
+cd evidenceflip
+python -m pip install -e .
+evidenceflip-rag --root . retrieve "How many observations are in the Orion dataset?"
+\`\`\`
 
-MIT License.
+Output contains source IDs, exact retrieved passages and BM25 scores. The example corpus currently holds **11 registered synthetic documents**, including research-methodology notes, an incident playbook, and a fictional dataset card.
+
+## Ask a local language model
+
+Install [Ollama](https://ollama.com/), pull a model appropriate for your machine, and ensure its local server is running:
+
+\`\`\`bash
+ollama pull llama3.2
+evidenceflip-rag --root . ask "How many observations are in the Orion dataset?" --model llama3.2
+\`\`\`
+
+The RAG pipeline retrieves relevant source passages, sends **only those passages** as context to the configured local model, and returns an answer with citation IDs and the retrieval trace. Your model may still answer incorrectly, refuse, or invent citations; the framework does not silently label such behavior correct. Ollama must be running separately. A live-model accuracy benchmark has **not yet been performed**.
+
+To target a different Ollama server, supply \`--ollama-url\`. Be careful with remote endpoints: supplied research documents would leave your machine.
+
+## Retrieval evaluation
+
+\`\`\`bash
+evidenceflip-rag --root . benchmark --set examples/retrieval_benchmark.json --top-k 3
+\`\`\`
+
+The benchmark has 11 **author-labeled, synthetic** question/source pairs, intended to test wiring and catch regressions. Hit@k and MRR@k measure retrieval ranking, **not answer accuracy or faithfulness**. Results on these documents are not evidence of generalization to BEIR or other research corpora.
+
+## Counterfactual evaluation
+
+The existing independent test-suite evaluator can operate with a real Ollama model instead of the deterministic reference agent:
+
+\`\`\`bash
+evidenceflip evaluate examples/refund_scenarios.json --ollama-model llama3.2 --output results.json
+\`\`\`
+
+It reruns the question with the original source, a removed policy, a replacement policy, and an irrelevant-source negative control. Each intervention **rebuilds retrieval from the provided evidence**, so the model cannot unintentionally reuse a hidden, unchanged index. In a stochastic model, a single changed answer is not proof of causation. Review the full test trace and repeat trials where necessary.
+
+For deterministic CI smoke tests:
+
+\`\`\`bash
+python -m unittest discover -s tests -v
+evidenceflip verify --root .
+evidenceflip demo
+\`\`\`
+
+## Methodology and honest boundaries
+
+EvidenceFlip follows three established ideas:
+
+1. **Retrieval-augmented generation:** separate parametric model knowledge from retrieved source passages.
+2. **Information retrieval evaluation:** use explicit relevance labels and ranking metrics, starting with a transparent BM25 baseline.
+3. **Counterfactual and metamorphic testing:** hold the question constant while removing or changing evidence, then compare against preregistered expectations.
+
+A matching SHA-256 digest proves **file consistency against the registry**, not factual truth. A valid citation identifier proves **source availability**, not claim-level entailment. A working RAG pipeline is not the same as a benchmarked or peer-reviewed research system.
+
+Read [Research methodology](docs/RAG_RESEARCH.md), [Development plan](docs/ENGINEERING_PLAN.md), [Build log](docs/BUILD_LOG.md), and [Release policy](docs/RELEASE_POLICY.md).
+
+## Research references
+
+- Lewis et al., [Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401), NeurIPS 2020.
+- Thakur et al., [BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models](https://arxiv.org/abs/2104.08663), 2021.
+- Es et al., [RAGAs: Automated Evaluation of Retrieval Augmented Generation](https://aclanthology.org/2024.eacl-demo.16/), EACL 2024.
+
+## Contribute
+
+Use [CONTRIBUTING.md](CONTRIBUTING.md) to add a focused regression test, source ingestion format, retriever, generator adapter, benchmark, or scientific replication. Do not upload sensitive research data or redistribute copyrighted corpora without permission.
+
+**License:** [MIT](LICENSE). **Current status:** active development, no automatic GitHub Pages publishing.
