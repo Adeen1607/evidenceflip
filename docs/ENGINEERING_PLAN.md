@@ -4,6 +4,8 @@
 
 **Delivery window:** 20 scheduled development runs, November 11–30, 2026, at 02:00 America/Toronto. The repository CI is intentionally scheduled daily beyond this 20-day development window so regressions can still be detected.
 
+**Prelaunch release freeze:** Throughout the full development window, GitHub Pages deployment and public site publication are out of scope. Site assets can be developed and tested locally, but they must not be deployed. Final public launch may happen after the 20-day development period, only with the owner's explicit go-ahead. See [RELEASE_POLICY.md](RELEASE_POLICY.md).
+
 ## Research and engineering gates
 
 Every code change should pass this sequence before being described as complete:
