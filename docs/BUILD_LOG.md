@@ -1,5 +1,36 @@
 # EvidenceFlip build log
 
+## 2026-11-10 · Functional RAG research implementation (draft PR)
+
+**Product decision:** EvidenceFlip must be a usable RAG workbench with a scientific evaluation path, not merely a data-integrity-themed demo website. Research utility, reproducibility, and accurate scope take priority over branding.
+
+**Research consulted:** Lewis et al. (2020) on retrieval-augmented generation; Thakur et al. (2021) on heterogeneous retrieval and BM25; Es et al. (2024) on separate RAG evaluation dimensions; current Ollama \`/api/chat\` request contract. The methodology and links are recorded in [RAG_RESEARCH.md](RAG_RESEARCH.md).
+
+**Hypothesis:** A real retrieved-evidence pipeline can be implemented with a transparent BM25 baseline and local LLM interface, while source removal and replacement still reach the generator when each intervention rebuilds retrieval.
+
+**Implemented (feature branch, not main):**
+- Registered 9 new project-authored synthetic documents and 11 author-labeled retrieval questions; 11 total registered documents.
+- Verified source loading with SHA-256, manifest-path checks, duplicate-ID rejection, and UTF-8 limits.
+- Added chunking, BM25 ranking, top-k passage traces, and source/offset metadata.
+- Implemented local Ollama generation through the documented nonstreaming chat endpoint.
+- Preserved model-generated citation IDs, including invented citations for detection.
+- Built a counterfactual adapter that reindexes from the scenario's supplied context.
+- Added document import from researcher-owned Markdown/text, with explicit license and provenance metadata.
+- Added retrieval, ask, register, and benchmark CLI commands, and optional live Ollama mode to the counterfactual evaluator.
+- Wrote regression tests and a detailed research methodology, replacing the hype-first README.
+- Extended prelaunch CI to record a synthetic retrieval audit. No Pages deployment job was added.
+
+**Local trials:** 23 tests passed (17 RAG-core tests, 2 counterfactual adapter tests, 4 source registration tests). Verified exact Git blob SHA parity for the tested \`rag.py\`, \`rag_cli.py\` (before later register addition), \`test_rag.py\`, manifest, and sample source files. Local \`retrieve\` and \`benchmark\` commands ran. The 11-query synthetic benchmark is **not** a research accuracy claim.
+
+**GitHub CI:** PR checks on the feature branch completed successfully on Python 3.10, 3.12, and 3.13 after core RAG and registration changes: [workflow 42888351346](https://github.com/Adeen1607/evidenceflip/actions/runs/42888351346). Later documentation-only commits require checking their own status.
+
+**Not performed:** Actual generation by installed Ollama weights, evaluations on external scholarly datasets, head-to-head retriever comparisons, claim-level entailment assessments, calibrated uncertainty intervals, or any site deployment.
+
+**Review:** [Draft PR #1](https://github.com/Adeen1607/evidenceflip/pull/1). **Do not merge or deploy** until GitHub Pages branch publishing is disabled and the owner confirms the release process.
+
+**Next engineering checkpoints:** Make a locally repeatable live-model benchmark; add a documented dense or hybrid retrieval baseline; create a permission-aware PDF ingestion path; use held-out domain-specific relevance labels; implement claim-level support evaluations and repeated statistical trials; quantify speed and memory use.
+
+
 The purpose of this log is **auditability**: separate implemented work, tested behavior, and remaining blockers. Commit history is the source of truth for actual changes.
 
 ## 2026-11-10 · Launch embargo and CI-only change
