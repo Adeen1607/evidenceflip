@@ -20,7 +20,6 @@ def make_openai_compatible_agent(client, model: str):
                   + context + "\n\nQuestion: " + question)
         result = client.chat.completions.create(model=model, messages=[{"role":"user","content":prompt}], temperature=0)
         text = result.choices[0].message.content or ""
-        ids = {e.id for e in evidence}
-        cited = tuple(dict.fromkeys(x for x in re.findall(r"\[([^\]]+)\]", text) if x in ids))
+        cited = tuple(dict.fromkeys(x for x in re.findall(r"\[([^\]]+)\]", text)))
         return Answer(text, cited)
     return agent
