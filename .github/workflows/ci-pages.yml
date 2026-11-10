@@ -1,4 +1,4 @@
-name: DATA INTEGRITY · CI/CD and GitHub Pages
+name: DATA INTEGRITY · CI only (prelaunch)
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
   pull_request:
   workflow_dispatch:
   schedule:
-    # Timezone-aware scheduling preserves 02:00 across daylight saving transitions.
+    # Daily checks during development; no publishing or deployment.
     - cron: '0 2 * * *'
       timezone: 'America/Toronto'
 
@@ -14,7 +14,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: evidenceflip-cicd-${{ github.ref }}
+  group: evidenceflip-ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -46,35 +46,3 @@ jobs:
           path: evidenceflip-results.json
           retention-days: 7
 
-  pages:
-    name: Publish verified interactive portfolio
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    needs: quality
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Build auditable Pages bundle
-        run: |
-          mkdir -p _site/sources _site/docs
-          cp -R site/. _site/
-          cp -R sources/. _site/sources/
-          cp docs/DATA_INTEGRITY.md docs/INTERVIEW_GUIDE.md _site/docs/
-          python -m evidenceflip verify --root .
-          python -m evidenceflip demo --output _site/evaluation.json
-          touch _site/.nojekyll
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v4
-        with:
-          path: _site
-      - id: deployment
-        uses: actions/deploy-pages@v4
