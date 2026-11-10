@@ -2,6 +2,18 @@
 
 The purpose of this log is **auditability**: separate implemented work, tested behavior, and remaining blockers. Commit history is the source of truth for actual changes.
 
+## 2026-11-10 · Launch embargo and CI-only change
+
+**Decision:** The owner explicitly requested a private development period with no final GitHub Pages publication before the 20-day build is complete.
+
+**Change:** Removed the `pages` deployment job and deploy-pages permissions from the GitHub Actions workflow, retaining tests, source-integrity verification, the audit artifact, and daily 02:00 America/Toronto CI. Commit: [4687d99](https://github.com/Adeen1607/evidenceflip/commit/4687d9969fc5f2a85c0da60176316a1249dbea6f).
+
+**Automation:** Updated the 20-day build task to focus on real product usability, acceptance tests, licensing, and evidence-backed commits. Final launch remains gated behind development completion and explicit owner authorization.
+
+**Previously deployed site:** An earlier deployment succeeded before this release freeze. Removing the deployment job prevents subsequent deployments from that workflow but does not retroactively unpublish the existing GitHub Pages site. Unpublishing the already-live site, if desired, requires changing repository Pages settings with an account that has admin access.
+
+**Verification:** Awaiting a completed GitHub Actions run on the new CI-only workflow. Do not claim the existing Pages site is offline until its status is independently confirmed.
+
 ## 2026-11-10 · Engineering baseline and CI/CD setup
 
 **Research:** Checked the existing connected GitHub repository, the prior local implementation, official GitHub Pages/Actions deployment guidance, the current source manifest, and the API's behavior for invalid citation IDs.
