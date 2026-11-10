@@ -5,6 +5,7 @@ import argparse
 import json
 from pathlib import Path
 from .rag import BM25Retriever, OllamaGenerator, RAGPipeline, chunk_sources, evaluate_retrieval, load_sources
+from .ingest import register_source
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -13,6 +14,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--chunk-size", type=int, default=120)
     parser.add_argument("--overlap", type=int, default=20)
     commands = parser.add_subparsers(dest="command", required=True)
+    register = commands.add_parser("register", help="Import a permitted Markdown or text document into the source registry")
+    register.add_argument("--file", required=True)
+    register.add_argument("--id", required=True)
+    register.add_argument("--title", required=True)
+    register.add_argument("--origin", required=True)
+    register.add_argument("--license", required=True)
     retrieve = commands.add_parser("retrieve", help="Search verified documents with BM25 (no LLM)")
     retrieve.add_argument("question")
     retrieve.add_argument("--top-k", type=int, default=3)
@@ -26,6 +33,11 @@ def main(argv: list[str] | None = None) -> int:
     benchmark.add_argument("--top-k", type=int, default=3)
     args = parser.parse_args(argv)
     try:
+        if args.command == "register":
+            entry = register_source(args.root, args.file, args.id, title=args.title,
+                                    origin=args.origin, license=args.license)
+            print(json.dumps(entry, indent=2))
+            return 0
         index = BM25Retriever(chunk_sources(load_sources(args.root), args.chunk_size, args.overlap))
         if args.command == "retrieve":
             print(json.dumps([{"source": h.chunk.source_id, "chunk": h.chunk.id,
