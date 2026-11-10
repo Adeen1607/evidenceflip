@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "id": "refund-policy",
+      "title": "Synthetic Refund Policy",
+      "path": "sources/articles/refund-policy.md",
+      "type": "article",
+      "origin": "synthetic example",
+      "license": "MIT",
+      "sha256": "dc229dadbdbfee8486418eabb7af1162ae54ed5f17ec061643286d6ab6254108"
+    },
+    {
+      "id": "customer-support",
+      "title": "Synthetic Customer Support",
+      "path": "sources/blogs/customer-support.md",
+      "type": "blog",
+      "origin": "synthetic example",
+      "license": "MIT",
+      "sha256": "25a7b41faf733587631711751c88b5f8fe6c6faeec4c873cd056f3cf4d25a35d"
+    }
+  ]
+}
