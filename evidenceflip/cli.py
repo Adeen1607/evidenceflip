@@ -23,6 +23,9 @@ def main(argv=None):
     e = sub.add_parser("evaluate", help="Run JSON scenario suite with reference adapter")
     e.add_argument("suite")
     e.add_argument("--output", default=None)
+    e.add_argument("--ollama-model", default=None, help="Use a real local Ollama model instead of the deterministic demo adapter")
+    e.add_argument("--ollama-url", default="http://127.0.0.1:11434")
+    e.add_argument("--top-k", type=int, default=3)
     d = sub.add_parser("demo", help="Run included evaluation suite")
     d.add_argument("--output", default=None)
     args = parser.parse_args(argv)
@@ -31,7 +34,12 @@ def main(argv=None):
         print(json.dumps(results, indent=2))
         return 0 if all(r["valid"] for r in results) else 1
     suite = args.suite if args.command == "evaluate" else str(Path(__file__).resolve().parent.parent / "examples" / "refund_scenarios.json")
-    results = [evaluate(s, policy_agent) for s in load_scenarios(suite)]
+    agent = policy_agent
+    if args.command == "evaluate" and args.ollama_model:
+        from .rag import OllamaGenerator
+        from .rag_adapter import make_rag_agent
+        agent = make_rag_agent(OllamaGenerator(model=args.ollama_model, base_url=args.ollama_url), top_k=args.top_k)
+    results = [evaluate(s, agent) for s in load_scenarios(suite)]
     payload = {"summary": {"total": len(results), "passed": sum(r.passed for r in results)}, "results": [to_dict(r) for r in results]}
     content = json.dumps(payload, indent=2)
     if args.output:
