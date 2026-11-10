@@ -1,0 +1,71 @@
+{
+  "description": "Author-labeled synthetic research fixtures; not a model accuracy claim",
+  "queries": [
+    {
+      "question": "What should we record to make a RAG experiment reproducible?",
+      "relevant_sources": [
+        "reproducibility"
+      ]
+    },
+    {
+      "question": "Why does a source citation ID not demonstrate claim-level support?",
+      "relevant_sources": [
+        "citation-audit"
+      ]
+    },
+    {
+      "question": "What is the difference between BM25 lexical retrieval and dense vectors?",
+      "relevant_sources": [
+        "lexical-retrieval"
+      ]
+    },
+    {
+      "question": "What is a negative control in counterfactual evidence testing?",
+      "relevant_sources": [
+        "counterfactual-design"
+      ]
+    },
+    {
+      "question": "How are Hit at k and mean reciprocal rank defined?",
+      "relevant_sources": [
+        "retrieval-metrics"
+      ]
+    },
+    {
+      "question": "What privacy safeguards should researchers consider before indexing?",
+      "relevant_sources": [
+        "privacy"
+      ]
+    },
+    {
+      "question": "What is the severity-one acknowledgement target for Atlas incidents?",
+      "relevant_sources": [
+        "incident-response"
+      ]
+    },
+    {
+      "question": "How many synthetic observations are in the Orion dataset?",
+      "relevant_sources": [
+        "dataset-card"
+      ]
+    },
+    {
+      "question": "How long are fictional lab evaluation outputs retained?",
+      "relevant_sources": [
+        "retention-rule"
+      ]
+    },
+    {
+      "question": "What is the refund window in the synthetic policy?",
+      "relevant_sources": [
+        "refund-policy"
+      ]
+    },
+    {
+      "question": "How may customers contact support for refund help?",
+      "relevant_sources": [
+        "customer-support"
+      ]
+    }
+  ]
+}

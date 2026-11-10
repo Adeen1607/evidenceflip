@@ -38,11 +38,15 @@ jobs:
         run: python -m evidenceflip verify --root .
       - name: Run deterministic counterfactual demo
         run: python -m evidenceflip demo --output evidenceflip-results.json
+      - name: Run author-labeled synthetic retrieval benchmark
+        run: python -m evidenceflip.rag_cli benchmark --set examples/retrieval_benchmark.json --top-k 3 > retrieval-audit.json
       - name: Upload evidence audit
         if: matrix.python-version == '3.12'
         uses: actions/upload-artifact@v4
         with:
           name: evidenceflip-audit
-          path: evidenceflip-results.json
+          path: |
+            evidenceflip-results.json
+            retrieval-audit.json
           retention-days: 7
 

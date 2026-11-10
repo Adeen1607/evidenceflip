@@ -18,6 +18,87 @@
       "origin": "synthetic example",
       "license": "MIT",
       "sha256": "25a7b41faf733587631711751c88b5f8fe6c6faeec4c873cd056f3cf4d25a35d"
+    },
+    {
+      "id": "reproducibility",
+      "title": "Reproducibility checklist",
+      "path": "sources/research/reproducibility.md",
+      "type": "research-note",
+      "origin": "project-authored synthetic research fixture",
+      "license": "MIT",
+      "sha256": "fa7e02c575ccfb7f26ed9cedce9ff595a917840431a581704dc61e91d28dfe38"
+    },
+    {
+      "id": "citation-audit",
+      "title": "Citation audit guidance",
+      "path": "sources/research/citation-audit.md",
+      "type": "research-note",
+      "origin": "project-authored synthetic research fixture",
+      "license": "MIT",
+      "sha256": "e456c92ed437b4199e3f01be58d8b149d84ea9b76365aecea6e489d41c4507fb"
+    },
+    {
+      "id": "lexical-retrieval",
+      "title": "Lexical retrieval notes",
+      "path": "sources/research/lexical-retrieval.md",
+      "type": "research-note",
+      "origin": "project-authored synthetic research fixture",
+      "license": "MIT",
+      "sha256": "9507ba2e4807dab5a05e43d50750981ea9222e1de3d4729419093f77c761553e"
+    },
+    {
+      "id": "counterfactual-design",
+      "title": "Counterfactual evaluation protocol",
+      "path": "sources/research/counterfactual-design.md",
+      "type": "research-note",
+      "origin": "project-authored synthetic research fixture",
+      "license": "MIT",
+      "sha256": "f5f67e2c9b65713a3fa44166c21c3df02f75e08efd995f8112ecb7d6c8198787"
+    },
+    {
+      "id": "retrieval-metrics",
+      "title": "Retrieval evaluation metrics",
+      "path": "sources/research/retrieval-metrics.md",
+      "type": "research-note",
+      "origin": "project-authored synthetic research fixture",
+      "license": "MIT",
+      "sha256": "65eeae38dcb2fb3f47a0230667fde73cde6ab32d75be016afaee6a9365bce17b"
+    },
+    {
+      "id": "privacy",
+      "title": "Research data privacy safeguards",
+      "path": "sources/research/privacy.md",
+      "type": "research-note",
+      "origin": "project-authored synthetic research fixture",
+      "license": "MIT",
+      "sha256": "2e1c68d663ec695002babe747c77b6e6fb0f64b829136a3dd91f0039f942af34"
+    },
+    {
+      "id": "incident-response",
+      "title": "Synthetic Atlas Incident Response Guide",
+      "path": "sources/articles/incident-response.md",
+      "type": "article",
+      "origin": "project-authored synthetic research fixture",
+      "license": "MIT",
+      "sha256": "031e6699f36383d1405cbf45bebcd2c7a37889464b40ad0980c08ee73f4e576b"
+    },
+    {
+      "id": "dataset-card",
+      "title": "Synthetic Orion Dataset Card",
+      "path": "sources/articles/dataset-card.md",
+      "type": "article",
+      "origin": "project-authored synthetic research fixture",
+      "license": "MIT",
+      "sha256": "cc9f1856a2806e3c04053378e2346503374ad76661de212e681cada9a923d5be"
+    },
+    {
+      "id": "retention-rule",
+      "title": "Synthetic Lab Data Retention Rule",
+      "path": "sources/articles/retention-rule.md",
+      "type": "article",
+      "origin": "project-authored synthetic research fixture",
+      "license": "MIT",
+      "sha256": "6a508a4edba7069652f594d34168d53c3ad22b3ef839b9f3177d03c5dcc000a1"
     }
   ]
 }
