@@ -33,6 +33,23 @@ evidenceflip-rag --root . retrieve "How many observations are in the Orion datas
 
 Output contains source IDs, exact retrieved passages and BM25 scores. The example corpus currently holds **11 registered synthetic documents**, including research-methodology notes, an incident playbook, and a fictional dataset card.
 
+## Bring your own research documents
+
+Import a plain-text or Markdown document that you are permitted to store and redistribute. Declare its title, origin, and license explicitly:
+
+\`\`\`bash
+evidenceflip-rag --root . register \
+  --file ./my-study.md \
+  --id my-study \
+  --title "My Study Notes" \
+  --origin "Original notes written by the author" \
+  --license "MIT"
+\`\`\`
+
+The command copies the file into \`sources/imported/\`, computes its SHA-256 fingerprint, and updates \`sources/manifest.json\`. Subsequent searches load and verify the imported document alongside the examples. Importing a file **does not** establish that its facts, license declaration, or scholarly conclusions are correct.
+
+Only UTF-8 \`.md\` and \`.txt\` documents under 2 MB are supported for now. **Do not commit confidential, restricted, or third-party copyrighted papers without permission**. PDF parsing and larger research-corpus ingestion remain planned work.
+
 ## Ask a local language model
 
 Install [Ollama](https://ollama.com/), pull a model appropriate for your machine, and ensure its local server is running:
