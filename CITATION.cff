@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If EvidenceFlip helps your research or application, please cite this repository."
+title: "EvidenceFlip: DATA INTEGRITY and Counterfactual Evidence Evaluation for RAG"
+type: software
+authors:
+  - family-names: "Shaik"
+    given-names: "Mohammed Adeen"
+repository-code: "https://github.com/Adeen1607/evidenceflip"
+license: MIT
