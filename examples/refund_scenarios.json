@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "description": "Deterministic synthetic scenarios. They are not claims about real policies or model training data.",
+  "scenarios": [
+    {
+      "name": "baseline_original_policy",
+      "question": "How many days do customers have to request a refund?",
+      "evidence": [
+        {
+          "id": "refund-policy",
+          "text": "The refund window is 30 days from purchase."
+        },
+        {
+          "id": "customer-support",
+          "text": "Customers can contact support by email for help with refund requests."
+        }
+      ],
+      "expected_text": "30 days",
+      "expected_citations": [
+        "refund-policy"
+      ]
+    },
+    {
+      "name": "policy_removed_should_abstain",
+      "question": "How many days do customers have to request a refund?",
+      "evidence": [
+        {
+          "id": "customer-support",
+          "text": "Customers can contact support by email for help with refund requests."
+        }
+      ],
+      "expected_text": "cannot determine",
+      "expected_citations": [],
+      "expect_abstention": true
+    },
+    {
+      "name": "counterfactual_14_day_policy",
+      "question": "How many days do customers have to request a refund?",
+      "evidence": [
+        {
+          "id": "refund-policy",
+          "text": "The refund window is 14 days from purchase."
+        },
+        {
+          "id": "customer-support",
+          "text": "Customers can contact support by email for help with refund requests."
+        }
+      ],
+      "expected_text": "14 days",
+      "expected_citations": [
+        "refund-policy"
+      ]
+    },
+    {
+      "name": "negative_control_unrelated_removed",
+      "question": "How many days do customers have to request a refund?",
+      "evidence": [
+        {
+          "id": "refund-policy",
+          "text": "The refund window is 30 days from purchase."
+        }
+      ],
+      "expected_text": "30 days",
+      "expected_citations": [
+        "refund-policy"
+      ]
+    }
+  ]
+}
