@@ -5,16 +5,17 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "evidenceflip"
 version = "0.2.0"
-description = "DATA INTEGRITY and counterfactual evidence evaluation for RAG systems"
+description = "Research-oriented RAG retrieval, generation and counterfactual evaluation"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [{name = "EvidenceFlip contributors"}]
-keywords = ["rag", "evaluation", "data-integrity", "counterfactual-testing", "ai"]
+keywords = ["rag", "retrieval", "bm25", "evaluation", "counterfactual-testing", "ai"]
 classifiers = ["Programming Language :: Python :: 3", "Topic :: Software Development :: Testing"]
 
 [project.scripts]
 evidenceflip = "evidenceflip.cli:main"
+evidenceflip-rag = "evidenceflip.rag_cli:main"
 
 [tool.setuptools.packages.find]
 include = ["evidenceflip*"]
