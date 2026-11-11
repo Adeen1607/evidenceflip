@@ -20,7 +20,8 @@ Source files (.md, .txt)
     -> source manifest (path, provenance, license, SHA-256)
     -> verify original bytes (reject mismatch)
     -> word-window chunker (source ID, word offsets)
-    -> BM25 retrieval (rank and score top-k passages)
+    -> BM25 retrieval OR optional pretrained dense cosine retrieval
+       (rank and score top-k passages; scores not cross-model comparable)
     -> prompt with retrieved text and instruction boundary
     -> Ollama locally installed LLM (/api/chat, temperature 0)
     -> answer + citation IDs + invalid source IDs + retrieved passages
@@ -35,7 +36,7 @@ The model's actual training data are unknown. The corpus in \`sources/\` is **re
 | --- | --- | --- |
 | Word chunk size | 120 | Inspectable sliding window |
 | Word overlap | 20 | Must be less than size |
-| Retriever | BM25 | k1=1.5, b=0.75 |
+| Retriever | BM25 | k1=1.5, b=0.75; optional sentence-transformer dense cosine search |
 | Retrieval depth | top 3 chunks | Includes multiple chunks from same source when applicable |
 | Generator | Ollama model selected by user | Default CLI model name: \`llama3.2\`; no weights included |
 | Temperature | 0 | Does not guarantee complete determinism |
@@ -53,6 +54,24 @@ Given a query \(q_i\), a set of source documents, and a manually labeled relevan
 
 These metrics do not evaluate factual correctness of generated answers. Our initial benchmark contains terms strongly overlapping the documents. High scores are expected and should never be marketed as performance on unseen research questions.
 
+### Optional dense retrieval and provenance
+
+The opt-in dense adapter uses an external pretrained sentence-transformer
+checkpoint and normalized cosine similarity, with the same chunk IDs and
+source paths, SHA-256 digests, and declared licenses as BM25. The adapter
+rejects empty, nonfinite, zero-length and inconsistent embeddings. Dense
+nearest neighbors are **not** guaranteed to be relevant, and cosine scores
+are not calibrated confidence. A small injected-vector unit test checks
+semantic-style ranking without downloading weights; it is not an empirical
+claim about any pretrained checkpoint. The CLI benchmark now records
+retriever/model selection, source and label fingerprints, chunk settings,
+Python/platform metadata, and retrieval-loop time (excluding model/index
+initialization). No real embedding-model benchmark has yet been run.
+
+See [the BM25/dense tutorial](DENSE_RETRIEVAL.md) for installation,
+reproduction commands, data-rights cautions, and a held-out evaluation
+protocol.
+
 ### Answer and source checks
 
 - **Available citation ID:** a citation names one of the retrieved sources. This does not establish that the passage supports the generated claim.
@@ -65,7 +84,7 @@ Counterfactual tests rebuild the retrieval index from the scenario's supplied ev
 
 ### Future controlled experiments (not yet run)
 
-1. Compare lexical BM25, dense embeddings, and a hybrid retriever on **the same** explicitly licensed corpus and held-out questions.
+1. Evaluate BM25 and the new optional dense adapter on **the same** explicitly licensed corpus and held-out questions, then add a hybrid baseline.
 2. Evaluate generation with and without retrieval using the same model, prompts, answer format, and compute budget.
 3. Preregister answer-level expectations for source removal, source contradiction, distractor addition, and unchanged-evidence controls.
 4. Repeat stochastic model trials and report both mean and variability, including confidence intervals when statistically justified.
@@ -79,7 +98,7 @@ Counterfactual tests rebuild the retrieval index from the scenario's supplied ev
 | Threat | Mitigation or current limitation |
 | --- | --- |
 | **Synthetic corpus overfitting** | Small smoke test only; use separate held-out datasets before research claims |
-| **Lexical bias** | BM25 matches query terms; add paraphrase challenges and embedding baselines |
+| **Lexical bias** | BM25 matches query terms; the optional dense adapter exists but no pretrained embedding benchmark has been run |
 | **Citation laundering** | Source-ID availability alone is not entailment, human claim review still required |
 | **Model randomness** | Temperature 0 may vary across versions and hardware; run repeated trials |
 | **Retrieval leakage** | Counterfactual adapter rebuilds from supplied documents |

@@ -15,7 +15,7 @@ import math
 from pathlib import Path
 import re
 import time
-from typing import Callable
+from typing import Callable, Protocol
 from urllib import error, request
 
 TOKENS = re.compile(r"\w+", re.UNICODE)
@@ -44,6 +44,9 @@ class Chunk:
     text: str
     start_word: int
     end_word: int
+    source_path: str = ""
+    source_sha256: str = ""
+    source_license: str = ""
 
 
 @dataclass(frozen=True)
@@ -64,6 +67,12 @@ class RAGResult:
 
     def to_dict(self) -> dict:
         return asdict(self)
+
+
+class Retriever(Protocol):
+    """Search interface shared by BM25 and optional dense retrieval."""
+
+    def search(self, question: str, top_k: int = 3) -> list[Hit]: ...
 
 
 def load_sources(root: str | Path, manifest: str = "sources/manifest.json") -> list[Source]:
@@ -119,7 +128,8 @@ def chunk_sources(sources: list[Source], size: int = 120, overlap: int = 20) -> 
         for start in range(0, len(spans), size - overlap):
             end = min(start + size, len(spans))
             text = source.text[spans[start].start():spans[end - 1].end()]
-            chunks.append(Chunk(f"{source.id}#w{start}", source.id, text, start, end))
+            chunks.append(Chunk(f"{source.id}#w{start}", source.id, text, start, end,
+                                source.path, source.sha256, source.license))
             if end == len(spans):
                 break
     return chunks
@@ -196,7 +206,7 @@ class OllamaGenerator:
 class RAGPipeline:
     """End-to-end source ingestion -> BM25 retrieval -> LLM answer generation."""
 
-    def __init__(self, retriever: BM25Retriever, generator: Callable[[str], str], model: str = "custom"):
+    def __init__(self, retriever: Retriever, generator: Callable[[str], str], model: str = "custom"):
         self.retriever = retriever
         self.generator = generator
         self.model = model

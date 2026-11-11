@@ -12,13 +12,13 @@ EvidenceFlip lets you load a documented source corpus, ask a locally running lan
 | --- | --- | --- |
 | Source registry | UTF-8 source files, provenance metadata, SHA-256 checks | Tampering, duplicates, and unsafe paths rejected |
 | Ingestion | Word-window chunking with configurable overlap | Stable source and chunk identifiers |
-| Retrieval | Inspectable BM25 lexical ranking | Labeled synthetic Hit@k and MRR@k |
+| Retrieval | Inspectable BM25 lexical ranking and optional sentence-transformer cosine retrieval | BM25 smoke benchmark and offline dense adapter tests |
 | Generation | Local Ollama /api/chat adapter | HTTP contract tested with mocked responses |
 | Attribution | Generated answer plus retrieved excerpts and citation identifiers | Unknown source IDs are flagged, not filtered |
 | Interventions | Reindex from supplied evidence for each experimental scenario | Replacement and removal reach the generator |
 | CI | Python compatibility checks and source verification | No Pages deployment in the prelaunch workflow |
 
-No new foundation-model weights are trained or bundled. RAG uses an existing local language model, such as a model pulled through Ollama. The Python retrieval and benchmarking implementation has **no mandatory external dependencies**.
+No new foundation-model weights are trained or bundled. RAG uses an existing local language model, such as a model pulled through Ollama. The Python retrieval and benchmarking implementation has **no mandatory external dependencies**. Dense embeddings require an optional extra and separately obtained pretrained weights.
 
 ## Quick start: see real retrieval (no model required)
 
@@ -62,6 +62,25 @@ evidenceflip-rag --root . ask "How many observations are in the Orion dataset?" 
 The RAG pipeline retrieves relevant source passages, sends **only those passages** as context to the configured local model, and returns an answer with citation IDs and the retrieval trace. Your model may still answer incorrectly, refuse, or invent citations; the framework does not silently label such behavior correct. Ollama must be running separately. A live-model accuracy benchmark has **not yet been performed**.
 
 To target a different Ollama server, supply \`--ollama-url\`. Be careful with remote endpoints: supplied research documents would leave your machine.
+
+## Optional semantic retrieval
+
+BM25 is the default and needs no model. To compare it with pretrained
+sentence-transformer cosine retrieval, install the optional dependency:
+
+```bash
+python -m pip install -e '.[dense]'
+evidenceflip-rag --root . --retriever dense \
+  --embedding-model sentence-transformers/all-MiniLM-L6-v2 \
+  retrieve "How many observations are in the Orion dataset?"
+```
+
+The embedding model may be downloaded on first use. Review its model card and
+license before running it. Dense similarity is **not** a calibrated measure of
+evidence relevance and a nearest-neighbor hit does not prove a claim. The
+offline CI tests use injected vectors, not real model weights. Read the
+[BM25 versus dense tutorial](docs/DENSE_RETRIEVAL.md) for reproducible
+comparison commands and interpretation cautions.
 
 ## Retrieval evaluation
 
