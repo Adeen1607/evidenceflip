@@ -10,7 +10,11 @@
 
 **Safety:** The GitHub Pages branch-publishing configuration could not be verified through the available GitHub connector. Therefore, no push to `main` or publishing branch is authorized. Development is isolated on `feature/dense-retrieval-20261111` based on `feature/local-rag-pipeline`. The workflow remains CI-only and site files remain undeployed.
 
-**Remaining validation:** Verify the branch PR's GitHub Actions Python matrix, source hash audit and synthetic BM25 benchmark. Record any failures and fix them before considering a merge. Later work needs a licensed held-out corpus, actual dense-model measurements, claim-level support evaluation, PDF ingestion, and explicit owner approval before any site launch.
+**Committed code:** [b6be11a](https://github.com/Adeen1607/evidenceflip/commit/b6be11ad9bffb505d42a31d6c260a23a8a160869). [Draft PR #2](https://github.com/Adeen1607/evidenceflip/pull/2) targets the existing feature branch only.
+
+**GitHub CI evidence:** [run 42976498115](https://github.com/Adeen1607/evidenceflip/actions/runs/42976498115) completed **successfully** on 2026-11-11. Python 3.10, 3.12 and 3.13 each ran **44 tests** without failures; the source-hash audit, deterministic counterfactual demo, and author-labeled synthetic BM25 benchmark also passed. This confirms offline adapter behavior and existing regression checks, **not** execution of real sentence-transformer weights, an external scholarly benchmark, or Ollama inference. No detected regression in the executed suite. A subsequent documentation-only commit should be checked separately.
+
+**Remaining work:** A licensed held-out corpus, actual dense-model measurements, claim-level support evaluation, PDF ingestion, and explicit owner approval before any site launch. Pages branch publishing remains unverified, so `main` is blocked.
 
 ## 2026-11-10 · Functional RAG research implementation (draft PR)
 

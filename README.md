@@ -27,6 +27,7 @@ Python 3.10+:
 \`\`\`bash
 git clone https://github.com/Adeen1607/evidenceflip.git
 cd evidenceflip
+git checkout feature/dense-retrieval-20261111  # development preview, not released on main
 python -m pip install -e .
 evidenceflip-rag --root . retrieve "How many observations are in the Orion dataset?"
 \`\`\`
@@ -130,4 +131,4 @@ Read [Research methodology](docs/RAG_RESEARCH.md), [Development plan](docs/ENGIN
 
 Use [CONTRIBUTING.md](CONTRIBUTING.md) to add a focused regression test, source ingestion format, retriever, generator adapter, benchmark, or scientific replication. Do not upload sensitive research data or redistribute copyrighted corpora without permission.
 
-**License:** [MIT](LICENSE). **Current status:** active development, no automatic GitHub Pages publishing.
+**License:** [MIT](LICENSE). **Current status:** active development. CI workflow has no Pages deployment job, but the repository's branch-based Pages publishing setting is unverified. Do not push to main or authorize a site launch.
