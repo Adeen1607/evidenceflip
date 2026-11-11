@@ -13,6 +13,9 @@ authors = [{name = "EvidenceFlip contributors"}]
 keywords = ["rag", "retrieval", "bm25", "evaluation", "counterfactual-testing", "ai"]
 classifiers = ["Programming Language :: Python :: 3", "Topic :: Software Development :: Testing"]
 
+[project.optional-dependencies]
+dense = ["sentence-transformers>=3.0"]
+
 [project.scripts]
 evidenceflip = "evidenceflip.cli:main"
 evidenceflip-rag = "evidenceflip.rag_cli:main"

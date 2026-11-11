@@ -1,5 +1,21 @@
 # EvidenceFlip build log
 
+## 2026-11-11 · Optional dense retriever with source traces (prelaunch)
+
+**Research and plan before implementation:** Inspected the active `feature/local-rag-pipeline` code, manifest, open PR #1, CI workflow and recent run 42888644908 (all three Python matrix jobs successful), and prior RAG, BEIR and RAGAs research. Acceptance criteria: (1) real opt-in sentence-transformer encoder usable by retrieve/ask/benchmark, (2) deterministic injectable-vector tests with no model download, (3) reject malformed embeddings and keep stable rankings, (4) retain path/hash/license provenance on hits, (5) record reproducibility metadata in benchmark JSON, (6) preserve default BM25 and CI-only workflow.
+
+**Implementation decision:** Introduce a lazy optional `sentence-transformers` adapter and an in-memory normalized cosine retriever. Keep the zero-dependency BM25 default. This is a pretrained embedding baseline, **not** new model training. Dense search returns nearest neighbors even when irrelevant; cosine scores are not evidence confidence. Add a tutorial covering licenses, synthetic data, held-out evaluation, and actual model reproducibility.
+
+**Pre-push local trial:** Seven new offline acceptance tests passed in a local test workspace using the exact new dense/CLI blobs and a minimal compatibility stub for existing RAG interfaces. The test does **not** constitute a full repository test or a live sentence-transformer run. Full repository regression testing is delegated to GitHub CI and must be checked separately. No actual embedding checkpoint or Ollama model was executed.
+
+**Safety:** The GitHub Pages branch-publishing configuration could not be verified through the available GitHub connector. Therefore, no push to `main` or publishing branch is authorized. Development is isolated on `feature/dense-retrieval-20261111` based on `feature/local-rag-pipeline`. The workflow remains CI-only and site files remain undeployed.
+
+**Committed code:** [b6be11a](https://github.com/Adeen1607/evidenceflip/commit/b6be11ad9bffb505d42a31d6c260a23a8a160869). [Draft PR #2](https://github.com/Adeen1607/evidenceflip/pull/2) targets the existing feature branch only.
+
+**GitHub CI evidence:** [run 42976498115](https://github.com/Adeen1607/evidenceflip/actions/runs/42976498115) completed **successfully** on 2026-11-11. Python 3.10, 3.12 and 3.13 each ran **44 tests** without failures; the source-hash audit, deterministic counterfactual demo, and author-labeled synthetic BM25 benchmark also passed. This confirms offline adapter behavior and existing regression checks, **not** execution of real sentence-transformer weights, an external scholarly benchmark, or Ollama inference. No detected regression in the executed suite. A subsequent documentation-only commit should be checked separately.
+
+**Remaining work:** A licensed held-out corpus, actual dense-model measurements, claim-level support evaluation, PDF ingestion, and explicit owner approval before any site launch. Pages branch publishing remains unverified, so `main` is blocked.
+
 ## 2026-11-10 · Functional RAG research implementation (draft PR)
 
 **Product decision:** EvidenceFlip must be a usable RAG workbench with a scientific evaluation path, not merely a data-integrity-themed demo website. Research utility, reproducibility, and accurate scope take priority over branding.
