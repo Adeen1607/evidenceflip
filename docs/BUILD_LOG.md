@@ -1,5 +1,18 @@
 # EvidenceFlip build log
 
+## 2026-11-12 · Claim-level citation coverage diagnostics (prelaunch)
+
+**Research and acceptance criteria:** Reviewed the existing local RAG implementation, open PRs #1 and #2, the 11-source synthetic manifest, previous CI evidence, and Lewis/BEIR/RAGAs research context. Acceptance criteria: (1) identify uncited sentences and fabricated citation IDs, (2) count only retrieved citations as covered, (3) handle abstentions and empty-claim cases without claiming perfect faithfulness, (4) expose diagnostics in the real `ask` CLI, (5) provide offline regression tests and interpretation guidance, (6) keep all work off main and Pages undeployed.
+
+**Implementation:** Added `evidenceflip/claim_audit.py`, eight offline unit tests, `citation_audit` JSON in the local Ollama `ask` response, and `docs/CLAIM_AUDIT.md`. This is **citation presence/coverage**, not claim entailment or RAGAs faithfulness. No LLM weights were executed and no new external corpus was acquired.
+
+**Safety:** Pages branch publishing remains unverified. Changes are confined to `feature/claim-citation-audit-20261112`, based on the previous dense-retrieval feature branch. Do not push or merge to main. No Pages settings or deployment workflow were changed.
+
+**Verification:** New tests and full CI require checking on the new PR; do not claim success until workflow completion. No benchmark accuracy or live LLM results are claimed.
+
+**Next:** Validate the CI run, add claim/passage support annotation on a properly licensed held-out evaluation set, and consider precision/recall against human labels. Pages publishing safety gate remains unresolved.
+
+
 ## 2026-11-11 · Optional dense retriever with source traces (prelaunch)
 
 **Research and plan before implementation:** Inspected the active `feature/local-rag-pipeline` code, manifest, open PR #1, CI workflow and recent run 42888644908 (all three Python matrix jobs successful), and prior RAG, BEIR and RAGAs research. Acceptance criteria: (1) real opt-in sentence-transformer encoder usable by retrieve/ask/benchmark, (2) deterministic injectable-vector tests with no model download, (3) reject malformed embeddings and keep stable rankings, (4) retain path/hash/license provenance on hits, (5) record reproducibility metadata in benchmark JSON, (6) preserve default BM25 and CI-only workflow.
