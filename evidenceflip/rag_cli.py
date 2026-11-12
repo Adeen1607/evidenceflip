@@ -11,6 +11,7 @@ import time
 from .dense import DEFAULT_EMBEDDING_MODEL, DenseRetriever, SentenceTransformerEncoder
 from .rag import BM25Retriever, OllamaGenerator, RAGPipeline, chunk_sources, evaluate_retrieval, load_sources
 from .ingest import register_source
+from .claim_audit import audit_result
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -62,7 +63,9 @@ def main(argv: list[str] | None = None) -> int:
         elif args.command == "ask":
             client = OllamaGenerator(model=args.model, base_url=args.ollama_url)
             response = RAGPipeline(index, client, model=args.model).ask(args.question, args.top_k)
-            print(json.dumps(response.to_dict(), indent=2))
+            output = response.to_dict()
+            output["citation_audit"] = audit_result(response)
+            print(json.dumps(output, indent=2))
         else:
             suite_path = Path(args.set)
             if not suite_path.is_absolute():
