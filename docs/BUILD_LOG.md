@@ -1,5 +1,20 @@
 # EvidenceFlip build log
 
+## 2026-11-13 · Human-labeled claim support scoring (prelaunch)
+
+**Inspection and research:** Reviewed the active claim-audit branch and draft PR #3, source manifest (11 MIT-labeled project-authored synthetic fixtures), previous CI, and Lewis/BEIR/RAGAs methodology. Prior PR #3 commit `ff8479b` has successful [CI run 43172535522](https://github.com/Adeen1607/evidenceflip/actions/runs/43172535522). This confirms that earlier commit's CI result, not today's work.
+
+**Acceptance criteria before implementation:** Offline scoring of human-labeled claim-to-evidence support; explicit TP/FP/FN/TN and precision/recall/F1; exclude and report unanswerable gold cases and predicted abstentions; reject malformed/duplicate records; add regression tests and a beginner tutorial; do not touch Pages or main.
+
+**Implementation and decision:** Added `evidenceflip/support_eval.py` with `evaluate_annotations` and `evaluate_file`, five unit tests, and [human support tutorial](HUMAN_SUPPORT_EVAL.md). This is *manual label scoring*, not an entailment model. Undefined metrics are null and abstention counts are visible. Synthetic example labels do not constitute empirical model performance. The module currently does not verify source hashes or link annotations to exact passages, which is a next priority.
+
+**Local test evidence:** Five new unit tests passed in an isolated Python 3 workspace using equivalent new module and test content, including confusion matrix, abstentions, malformed rows, no-positive-prediction metrics, and JSON file loading. Full repository and GitHub CI results for this branch must be checked independently; no real LLM or pretrained embedding inference was performed.
+
+**Safety:** Created `feature/human-support-eval-20261113` from `feature/claim-citation-audit-20261112`. No pushes to main, Pages settings changes, or hosting deployment. GitHub Pages branch publishing remains unverified and blocks main merges.
+
+**Next:** Verify this branch's CI, design a source-hash-bound annotation format and an independently labeled held-out set, and quantify inter-annotator agreement. Do not claim model faithfulness from these synthetic examples.
+
+
 ## 2026-11-12 · Claim-level citation coverage diagnostics (prelaunch)
 
 **Research and acceptance criteria:** Reviewed the existing local RAG implementation, open PRs #1 and #2, the 11-source synthetic manifest, previous CI evidence, and Lewis/BEIR/RAGAs research context. Acceptance criteria: (1) identify uncited sentences and fabricated citation IDs, (2) count only retrieved citations as covered, (3) handle abstentions and empty-claim cases without claiming perfect faithfulness, (4) expose diagnostics in the real `ask` CLI, (5) provide offline regression tests and interpretation guidance, (6) keep all work off main and Pages undeployed.
