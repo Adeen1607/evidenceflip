@@ -61,3 +61,37 @@ def evaluate_annotations(records: list[dict]) -> dict:
 def evaluate_file(path: str | Path) -> dict:
     """Read local JSON annotations without any network calls."""
     return evaluate_annotations(json.loads(Path(path).read_text(encoding="utf-8")))
+
+
+def evaluate_bound_annotations(records: list[dict], root: str | Path,
+                               manifest: str = "sources/manifest.json") -> dict:
+    """Verify annotations against SHA-256 checked local sources before scoring.
+
+    Each record must supply evidence_passages: a nonempty mapping from every
+    retrieved source ID to an exact, nonempty substring of that source.
+    This verifies provenance and excerpt presence, not semantic entailment.
+    """
+    from evidenceflip.rag import load_sources
+
+    # Validate all label and record structure before opening corpus files.
+    evaluate_annotations(records)
+    sources = {source.id: source for source in load_sources(root, manifest)}
+    for row in records:
+        rid = row["id"]
+        cited = row["retrieved_source_ids"]
+        passages = row.get("evidence_passages")
+        if not isinstance(passages, dict) or set(passages) != set(cited):
+            raise ValueError(f"Evidence passage IDs must match retrieved IDs for {rid}")
+        for sid in cited:
+            source = sources.get(sid)
+            if source is None:
+                raise ValueError(f"Unknown manifest source {sid} for {rid}")
+            passage = passages[sid]
+            if not isinstance(passage, str) or not passage.strip():
+                raise ValueError(f"Empty evidence passage for {sid} in {rid}")
+            if passage not in source.text:
+                raise ValueError(f"Evidence passage not found in verified source {sid} for {rid}")
+    report = evaluate_annotations(records)
+    report["provenance_verified"] = True
+    report["provenance_scope"] = "SHA-256 verified manifest and exact source substring only"
+    return report
