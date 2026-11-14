@@ -1,5 +1,19 @@
 # EvidenceFlip build log
 
+## 2026-11-14 · Source-bound human annotation provenance (prelaunch)
+
+**Inspection:** Reviewed draft PRs #1–#4, active support evaluator, SHA-256-checked source loader, source licensing conventions, and the earlier CI. PR #4 head `575f4e3` has a successful [GitHub Actions run 43383419402](https://github.com/Adeen1607/evidenceflip/actions/runs/43383419402). That run covers the preceding branch, **not** today's changes. Literature context remains Lewis RAG, BEIR, and RAGAs.
+
+**Acceptance criteria (before implementation):** Verify every annotated source against the registered manifest and its content hash; require a nonempty exact excerpt for each cited source; reject unknown IDs, mismatched passage keys, fabricated passages and tampered files; preserve scoring and abstention semantics; add offline tests and a beginner tutorial; do not touch main or Pages.
+
+**Implementation:** Added `evaluate_bound_annotations` to the existing support evaluator, reusing `rag.load_sources` for source SHA-256 checks. Added six offline regression tests in `tests/test_bound_support.py` and [tutorial](PROVENANCE_BOUND_SUPPORT.md). Exact excerpt membership is an integrity check, **not** claim entailment, model faithfulness, retrieval-run attestation or independent validation of human labels. No pretrained weights or Ollama generation were executed.
+
+**Verification status:** New tests were committed and require GitHub CI confirmation. Do not infer today's test success from the previous successful run. No new benchmark accuracy is claimed.
+
+**Safety:** Changes remain on `feature/provenance-bound-support-20261114`, based on PR #4's branch. No main push, Pages settings change or deployment. Branch publishing is not verifiably disabled and therefore blocks main merges.
+
+**Next:** Check CI for the new branch, resolve failures, bind annotations to retrieval-run chunk IDs/offsets, and design independent held-out human annotations with agreement measurement.
+
 ## 2026-11-13 · Human-labeled claim support scoring (prelaunch)
 
 **Inspection and research:** Reviewed the active claim-audit branch and draft PR #3, source manifest (11 MIT-labeled project-authored synthetic fixtures), previous CI, and Lewis/BEIR/RAGAs methodology. Prior PR #3 commit `ff8479b` has successful [CI run 43172535522](https://github.com/Adeen1607/evidenceflip/actions/runs/43172535522). This confirms that earlier commit's CI result, not today's work.
