@@ -1,5 +1,20 @@
 # EvidenceFlip build log
 
+## 2026-11-15 · Deterministic chunk-bound annotation provenance (prelaunch)
+
+**Inspection:** Reviewed the chained draft PRs #1–#5, existing SHA-256 source loader, word-window chunker, human-label scoring, six source-bound tests, and source-licensing conventions. No open issues were returned by the connected issue search. Research basis: Lewis RAG, BEIR and RAGAs. Previous source-bound branch CI remains to be independently checked.
+
+**Acceptance criteria before changes:** Retain hash-verified source checks and human-label metrics; reconstruct chunks with explicit size/overlap; reject unknown chunk IDs, source/offset mismatch, excerpts outside the chunk, malformed mappings and tampered files; add offline regression tests and a beginner tutorial; leave main and Pages untouched.
+
+**Implementation:** Added `evidenceflip/chunk_support.py` to validate exact excerpt membership in reconstructed chunks and match IDs and word offsets. Added seven offline regression tests in `tests/test_chunk_support.py` and [tutorial](CHUNK_BOUND_SUPPORT.md). Synthetic fixture is project-authored and declared MIT in its temporary manifest. This verifies deterministic chunk membership, **not** a logged retrieval event, semantic entailment, human-label quality or live model inference.
+
+**Verification:** Code and tests committed; full GitHub CI for this new branch is pending independent confirmation. No synthetic accuracy, external benchmark, actual Ollama execution or sentence-transformer model execution is claimed. Any CI failure must be resolved before marking ready.
+
+**Commits:** [implementation](https://github.com/Adeen1607/evidenceflip/commit/047e692941df09a692a23cc76c3f38f2e7277bfa), [tests](https://github.com/Adeen1607/evidenceflip/commit/483e4af2d30ab4e0162a13976f30efd25cc498de), [tutorial](https://github.com/Adeen1607/evidenceflip/commit/001aa721d8bd06b458d31d28192ddf836dac9c6e).
+
+**Safety and next:** Feature branch `feature/retrieval-chunk-binding-20261115` only; no main push, Pages settings change or deployment. Pages branch publishing is still unverified and blocks merging. Next: verify CI, add saved retrieval-run trace attestation with immutable run metadata, then independently labeled held-out evaluation.
+
+
 ## 2026-11-14 · Source-bound human annotation provenance (prelaunch)
 
 **Inspection:** Reviewed draft PRs #1–#4, active support evaluator, SHA-256-checked source loader, source licensing conventions, and the earlier CI. PR #4 head `575f4e3` has a successful [GitHub Actions run 43383419402](https://github.com/Adeen1607/evidenceflip/actions/runs/43383419402). That run covers the preceding branch, **not** today's changes. Literature context remains Lewis RAG, BEIR, and RAGAs.
