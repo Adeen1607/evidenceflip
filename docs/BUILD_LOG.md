@@ -1,5 +1,21 @@
 # EvidenceFlip build log
 
+## 2026-11-16 · Deterministic BM25 retrieval replay for annotated evidence (prelaunch)
+
+**Inspection:** Reviewed draft PRs #1–#6, `rag.py` BM25 and chunking, source manifest (11 project-authored MIT-labeled synthetic examples), `chunk_support.py`, support-label evaluation, and existing CI. The preceding branch head `a3cedcc` has a successful [GitHub Actions run 43688189993](https://github.com/Adeen1607/evidenceflip/actions/runs/43688189993). No open issues were returned. Research framing remains Lewis RAG, BEIR and RAGAs: provenance, retrieval ranking and claim faithfulness are separate measurements.
+
+**Acceptance criteria defined before implementation:** Re-run BM25 against SHA-256 verified registered sources; compare complete ordered top-k traces and scores; reject altered queries, fabricated ranks, wrong chunk settings, nonreturned annotated chunks, malformed traces and source tampering; retain existing human-label metrics; document limits; keep main and Pages untouched.
+
+**Implementation:** Added `evidenceflip/retrieval_trace.py` with `capture_bm25_trace` and `evaluate_trace_bound_annotations`, eight offline regression tests, and [beginner tutorial](RETRIEVAL_TRACE.md). This advances from reconstructed chunk membership to *reproducible retrieval replay*, not historical run attestation. Fixtures are project-authored synthetic text with MIT declaration.
+
+**Verification:** Preceding branch CI succeeded; new branch tests and CI must be independently checked. No actual Ollama, sentence-transformer weights, external benchmark or factual entailment evaluation is claimed. The deterministic replay does not prove a historical run occurred, and rankings may change with implementation versions.
+
+**Commits:** [feature](https://github.com/Adeen1607/evidenceflip/commit/7ab68e7576fe96f82bde206c80a4814b48275149), [tests](https://github.com/Adeen1607/evidenceflip/commit/a1d47a7ea8274df7a6e487fdfe79381f8a3b79d6), [tutorial](https://github.com/Adeen1607/evidenceflip/commit/b262f5dc5f489278085aa0325eba7a4f9089cdee).
+
+**Release safety:** Feature branch `feature/retrieval-trace-20261116` only. No main push, Pages configuration change or deployment. Pages branch publishing remains unverified and blocks merges. Public portfolio launch remains embargoed until after the full 20-day build, no earlier than November 30, 2026, with explicit owner authorization.
+
+**Next:** Confirm CI and fix regressions, then add immutable/content-addressed retrieval run records and held-out licensed evaluation.
+
 ## 2026-11-15 · Deterministic chunk-bound annotation provenance (prelaunch)
 
 **Inspection:** Reviewed the chained draft PRs #1–#5, existing SHA-256 source loader, word-window chunker, human-label scoring, six source-bound tests, and source-licensing conventions. No open issues were returned by the connected issue search. Research basis: Lewis RAG, BEIR and RAGAs. Previous source-bound branch CI remains to be independently checked.
