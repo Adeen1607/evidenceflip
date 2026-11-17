@@ -1,5 +1,19 @@
 # EvidenceFlip build log
 
+## 2026-11-17 · Content-addressed portable retrieval records (prelaunch)
+
+**Inspection:** Reviewed the current chained draft PRs, `retrieval_trace.py`, `rag.py`, synthetic source manifest, prior tests and CI. The November 16 head `eaedabf` has successful [GitHub Actions run 43821459713](https://github.com/Adeen1607/evidenceflip/actions/runs/43821459713); this does not establish today's branch status. No open issues were returned. Research framing follows Lewis RAG, BEIR and RAGAs: retrieval provenance and faithfulness are different questions.
+
+**Acceptance criteria before implementation:** Portable canonical JSON and SHA-256 digest; reject altered records, fabricated scores even when rehashed, source changes, invalid schema and nonfinite JSON; preserve BM25 replay; add synthetic MIT-licensed tests, beginner documentation and honest limitations. No main push or Pages changes.
+
+**Implementation:** Added `evidenceflip/trace_record.py` with `canonical_bytes`, `seal_trace` and `verify_trace_record`. Added eight offline regression tests and [trace record tutorial](TRACE_RECORDS.md). The SHA-256 digest is unkeyed and is not a signature or trusted historical attestation.
+
+**Verification:** Prior branch CI succeeded as linked above. New branch CI requires independent confirmation; no local full-suite execution, real LLM inference, dense model execution, or external research benchmark is claimed. If today's CI fails, repair before merging.
+
+**Release safety:** Work on `feature/content-addressed-traces-20261117` only. No main push, Pages configuration change, or deployment. Pages branch publishing remains unverified and blocks merging to main. Public launch no earlier than November 30, 2026 after full development and explicit owner authorization.
+
+**Next:** Verify new CI, add package/retriever version identifiers to records, and develop licensed held-out retrieval evaluation.
+
 ## 2026-11-16 · Deterministic BM25 retrieval replay for annotated evidence (prelaunch)
 
 **Inspection:** Reviewed draft PRs #1–#6, `rag.py` BM25 and chunking, source manifest (11 project-authored MIT-labeled synthetic examples), `chunk_support.py`, support-label evaluation, and existing CI. The preceding branch head `a3cedcc` has a successful [GitHub Actions run 43688189993](https://github.com/Adeen1607/evidenceflip/actions/runs/43688189993). No open issues were returned. Research framing remains Lewis RAG, BEIR and RAGAs: provenance, retrieval ranking and claim faithfulness are separate measurements.
