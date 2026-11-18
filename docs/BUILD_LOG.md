@@ -1,5 +1,22 @@
 # EvidenceFlip build log
 
+## 2026-11-18 · Versioned runtime metadata for BM25 replay records (prelaunch)
+
+**Inspection:** Reviewed draft PRs #1–#8, `trace_record.py`, `retrieval_trace.py`, `tests/test_trace_record.py`, the 11-entry project-authored MIT-labeled synthetic source manifest and the existing tutorial. No open issues returned. PR #8 head `d87a0c3` has a successful [GitHub Actions run 44035214270](https://github.com/Adeen1607/evidenceflip/actions/runs/44035214270); this verifies the preceding branch only. Research context remains Lewis RAG, BEIR and RAGAs, which distinguish retrieval reproducibility from claim faithfulness.
+
+**Acceptance criteria before implementation:** Add package/Python/retriever descriptors to the SHA-256-covered record without capturing sensitive host identifiers; preserve verification of old v1 records; reject malformed metadata and metadata tampering; report cross-environment mismatch without falsely rejecting successful replay; add regression tests and beginner documentation; keep main and Pages untouched.
+
+**Implementation:** Version 2 records contain validated metadata under the content digest, while v1 remains readable. `environment_matches` is informational and never substitutes for source integrity and full replay. Expanded offline synthetic regression suite from eight to thirteen tests. Updated [tutorial](TRACE_RECORDS.md). No package version is claimed to identify a Git revision; no digital signature or historical attestation is implied.
+
+**Verification:** Preceding branch CI succeeded as linked above. Today's new branch tests and GitHub CI must be checked independently before claiming success. No live Ollama, pretrained embeddings or external held-out benchmark was executed. No measured benchmark performance is claimed.
+
+**Commits:** [implementation](https://github.com/Adeen1607/evidenceflip/commit/4bc012e17c1280c8d3a10540902cdd6ee33b4dfc), [tests](https://github.com/Adeen1607/evidenceflip/commit/12af78f40567bc575272a51d006f7cc0ef959345), [tutorial](https://github.com/Adeen1607/evidenceflip/commit/a86fd42923d2fbb91194cf163228235b5352dff8).
+
+**Release safety:** Only `feature/trace-runtime-metadata-20261118`; no main push, Pages settings change or deployment. Pages branch publishing remains unverified, blocking main merges. Public launch after the full 20-day build, no earlier than November 30, 2026 and only with explicit owner authorization.
+
+**Next:** Confirm today's CI, fix failures, add dependency/revision fingerprinting where reproducible, and prioritize licensed held-out retrieval evaluation and real local model runs.
+
+
 ## 2026-11-17 · Content-addressed portable retrieval records (prelaunch)
 
 **Inspection:** Reviewed the current chained draft PRs, `retrieval_trace.py`, `rag.py`, synthetic source manifest, prior tests and CI. The November 16 head `eaedabf` has successful [GitHub Actions run 43821459713](https://github.com/Adeen1607/evidenceflip/actions/runs/43821459713); this does not establish today's branch status. No open issues were returned. Research framing follows Lewis RAG, BEIR and RAGAs: retrieval provenance and faithfulness are different questions.
