@@ -1,8 +1,8 @@
 # Portable content-addressed BM25 retrieval records
 
-This optional research utility adds a deterministic SHA-256 identifier to a BM25 retrieval trace and checks it against a fresh retrieval replay. It helps detect altered exported JSON and compare records across machines. It does **not** establish that a historical query was run, provide a digital signature, or prove factual support.
+This optional utility seals a BM25 trace with a deterministic SHA-256 digest, then replays the query against the SHA-256-verified local corpus. Version 2 records also contain informational runtime metadata: installed EvidenceFlip package version (or `uninstalled`), Python version, Python implementation and retriever identifier. No network, Ollama, or model weights are required.
 
-Install: `python -m pip install -e .` (Python 3.10+). Keep the source manifest and documents available locally.
+Install: `python -m pip install -e .` (Python 3.10+). Keep the licensed source manifest and documents available locally.
 
 ```python
 import json
@@ -13,17 +13,14 @@ from evidenceflip.trace_record import seal_trace, verify_trace_record
 root = Path(".")
 trace = capture_bm25_trace("What does the refund policy say?", root)
 record = seal_trace(trace)
-Path("trace-record.json").write_text(
-    json.dumps(record, indent=2, ensure_ascii=False), encoding="utf-8"
-)
+Path("trace-record.json").write_text(json.dumps(record, indent=2), encoding="utf-8")
 loaded = json.loads(Path("trace-record.json").read_text(encoding="utf-8"))
-print(verify_trace_record(loaded, root))
+report = verify_trace_record(loaded, root)
+print(report["record_verified"], report["environment_matches"])
 ```
 
-The digest is SHA-256 over UTF-8 JSON with sorted keys, compact separators, no NaN/Infinity, and Unicode preserved. `verify_trace_record` checks exact fields, the digest, the SHA-256-checked source corpus, and a fresh BM25 replay with the recorded query and chunk settings. The record intentionally contains no hostnames, user identifiers, or timestamps. Avoid recording sensitive questions or source metadata in shared traces.
+**What is verified:** Strict schema, digest over canonical UTF-8 JSON, SHA-256-checked source corpus, and exact BM25 ranking/score replay. Version 2 includes metadata inside the digest. Older version 1 records remain verifiable. `environment_matches` is `True` when recorded descriptors equal the current environment, `False` when different, and `None` for version 1. A mismatch is reported rather than rejected because replay may still succeed across Python/package versions.
 
-**Acceptance cases:** Round-trip JSON succeeds; key order does not change canonical bytes; modified rankings fail digest validation; recomputed digests on forged rankings still fail replay; changed documents fail source integrity; malformed records and nonfinite numbers fail.
+**Limitations:** The version is an installed distribution version, not a Git commit or dependency lockfile. Two different source revisions can share a package version. The Python and package fields are self-reported and can be forged; a new digest can be calculated by anyone. The digest is not a signature, historical run attestation, timestamp, or proof of factual support. A matching environment does not guarantee reproducibility; different source data or dependency versions may matter. The utility does not run a live LLM, sentence transformer, or external benchmark. Do not share traces containing sensitive questions. Examples and tests use project-authored MIT-licensed synthetic data; do not ingest unlicensed material.
 
-**Limitations:** SHA-256 is unkeyed. An attacker can regenerate a digest, so this is not authentication. Reproducibility depends on matching source content and the retrieval implementation. Record the package revision separately for cross-version comparisons. No live Ollama or sentence-transformer model is run by this utility. The examples are project-authored MIT-licensed synthetic text. Do not ingest unlicensed or sensitive documents.
-
-Run offline tests with `python -m unittest discover -s tests -v`. See [retrieval replay](RETRIEVAL_TRACE.md) and [chunk-bound support](CHUNK_BOUND_SUPPORT.md) for context.
+Run `python -m unittest discover -s tests -v`. See [retrieval replay](RETRIEVAL_TRACE.md) and [chunk-bound support](CHUNK_BOUND_SUPPORT.md).
