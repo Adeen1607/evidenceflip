@@ -1,4 +1,4 @@
-"""MIT-licensed project-authored synthetic tests for portable trace records."""
+"""MIT-licensed project-authored synthetic tests for versioned trace records."""
 import copy
 import hashlib
 import json
@@ -7,7 +7,9 @@ import unittest
 from pathlib import Path
 
 from evidenceflip.retrieval_trace import capture_bm25_trace
-from evidenceflip.trace_record import canonical_bytes, seal_trace, verify_trace_record
+from evidenceflip.trace_record import (
+    canonical_bytes, runtime_metadata, seal_trace, verify_trace_record,
+)
 
 
 class TraceRecordTests(unittest.TestCase):
@@ -28,7 +30,9 @@ class TraceRecordTests(unittest.TestCase):
 
     def test_roundtrip_json_and_replay(self):
         record = json.loads(json.dumps(self.record))
-        self.assertTrue(verify_trace_record(record, self.root)["record_verified"])
+        result = verify_trace_record(record, self.root)
+        self.assertTrue(result["record_verified"])
+        self.assertTrue(result["environment_matches"])
 
     def test_canonical_encoding_ignores_key_order(self):
         self.assertEqual(canonical_bytes({"b": 2, "a": 1}),
@@ -68,6 +72,38 @@ class TraceRecordTests(unittest.TestCase):
         for value in (float("nan"), float("inf"), object()):
             with self.subTest(value=str(value)), self.assertRaises(ValueError):
                 canonical_bytes({"bad": value})
+
+    def test_v1_records_remain_readable(self):
+        record = {"schema": "evidenceflip.trace_record.v1", "trace": self.trace,
+                  "sha256": hashlib.sha256(canonical_bytes(self.trace)).hexdigest()}
+        result = verify_trace_record(record, self.root)
+        self.assertTrue(result["record_verified"])
+        self.assertIsNone(result["environment_matches"])
+
+    def test_metadata_changes_invalidate_digest(self):
+        record = copy.deepcopy(self.record)
+        record["metadata"]["package_version"] = "forged"
+        with self.assertRaisesRegex(ValueError, "digest mismatch"):
+            verify_trace_record(record, self.root)
+
+    def test_resealed_other_environment_is_visible_not_rejected(self):
+        metadata = dict(runtime_metadata())
+        metadata["python_version"] = "3.10.0"
+        record = seal_trace(self.trace, metadata=metadata)
+        result = verify_trace_record(record, self.root)
+        self.assertTrue(result["record_verified"])
+        self.assertFalse(result["environment_matches"])
+
+    def test_invalid_metadata_rejected(self):
+        for metadata in ({"package_version": "1"}, dict(runtime_metadata(), retriever="dense"),
+                         dict(runtime_metadata(), python_version="")):
+            with self.subTest(metadata=metadata), self.assertRaises(ValueError):
+                seal_trace(self.trace, metadata=metadata)
+
+    def test_metadata_is_stable_in_canonical_record(self):
+        metadata = dict(runtime_metadata())
+        record = seal_trace(self.trace, metadata=metadata)
+        self.assertEqual(record["sha256"], seal_trace(self.trace, metadata=metadata)["sha256"])
 
 
 if __name__ == "__main__":
