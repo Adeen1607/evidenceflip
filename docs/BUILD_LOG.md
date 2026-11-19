@@ -1,5 +1,22 @@
 # EvidenceFlip build log
 
+## 2026-11-19 · Labeled source-level retrieval evaluation (prelaunch)
+
+**Inspection:** Reviewed prior draft PR #9 and implementation of `rag.py`, `retrieval_trace.py`, `trace_record.py`, its regression suite, package metadata and the 11-source MIT-labeled synthetic manifest. GitHub issues search returned no open issues. Previous head `f714d37` passed [GitHub Actions run 44255089808](https://github.com/Adeen1607/evidenceflip/actions/runs/44255089808) on Python 3.10, 3.12 and 3.13. This is evidence for the previous branch only. Research basis: Lewis RAG, BEIR and RAGAs, distinguishing retrieval judgments from generation faithfulness.
+
+**Acceptance criteria defined before implementation:** Evaluate ranked source IDs against explicit labels using hit@k, MRR@k, precision@k and recall@k; support existing BM25/dense retriever protocol; reject unknown/duplicate IDs, repeated normalized questions and malformed labels; provide offline regression tests and an accessible tutorial without invented benchmark scores; do not push to any publishing branch or configure Pages.
+
+**Implementation:** Added `evidenceflip/labeled_eval.py`, an adapter from chunk hits to ordered distinct source IDs, and validated per-case/aggregate retrieval metrics. Added nine project-authored MIT-licensed synthetic regression tests and [tutorial](LABELED_RETRIEVAL_EVAL.md). Evaluation does not automatically create held-out splits or human labels; researchers must supply and freeze these. No real pretrained embedding, Ollama generation or external benchmark was run.
+
+**Verification:** Existing parent commit CI succeeded as linked above. New branch CI is pending/not yet confirmed; nine new tests are committed but must not be represented as passing until executed. No benchmark figures are reported.
+
+**Commits:** [implementation](https://github.com/Adeen1607/evidenceflip/commit/138b8487f9170e8d1819b94d3b1285e4be98ee73), [tests](https://github.com/Adeen1607/evidenceflip/commit/8d4bb7d635338f475e427b209f574ec95db934bf), [tutorial](https://github.com/Adeen1607/evidenceflip/commit/11f52c4709b1dfdb240c83bc143d02145f3d40d9).
+
+**Release safety:** Changes remain on `feature/labeled-retrieval-eval-20261119`, based on prior feature work. No main push or Pages deployment/configuration. Pages publishing source remains unverified disabled, so publishing-branch merges remain blocked. Public launch no earlier than November 30, 2026, after full development and explicit owner authorization.
+
+**Next:** Verify branch CI and fix failures, then add a genuinely held-out, explicitly licensed human-labeled evaluation dataset and compare BM25 with actual dense inference under identical evaluation settings.
+
+
 ## 2026-11-18 · Versioned runtime metadata for BM25 replay records (prelaunch)
 
 **Inspection:** Reviewed draft PRs #1–#8, `trace_record.py`, `retrieval_trace.py`, `tests/test_trace_record.py`, the 11-entry project-authored MIT-labeled synthetic source manifest and the existing tutorial. No open issues returned. PR #8 head `d87a0c3` has a successful [GitHub Actions run 44035214270](https://github.com/Adeen1607/evidenceflip/actions/runs/44035214270); this verifies the preceding branch only. Research context remains Lewis RAG, BEIR and RAGAs, which distinguish retrieval reproducibility from claim faithfulness.
