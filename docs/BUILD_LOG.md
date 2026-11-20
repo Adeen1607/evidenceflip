@@ -1,3 +1,19 @@
+## 2026-11-20 · Pre-evaluation question split audit (prelaunch)
+
+**Inspection and research:** Inspected draft PR #10, `labeled_eval.py`, its synthetic tests, `pyproject.toml`, prior build log and open issues (none returned). Research framing follows Lewis RAG, BEIR and RAGAs. Existing evaluation checks duplicate questions within one batch but not between development and test partitions. This is a narrow, actionable leakage risk.
+
+**Acceptance criteria set before implementation:** Validate at least two nonempty named partitions and case schemas; flag repeated normalized questions and repeated IDs across partitions; reject duplicates within partitions; provide a fail-closed API, deterministic report without raw question text, MIT synthetic regression coverage, and beginner documentation. No benchmark numbers or model execution claims.
+
+**Implementation:** Added `evidenceflip/split_audit.py` with `audit_question_splits` and `require_disjoint_question_splits`. Added six synthetic unit tests in `tests/test_split_audit.py` and [tutorial](SPLIT_AUDIT.md). Normalization uses casefold and whitespace collapse. The digest output is not anonymization. Exact checks do not detect semantic paraphrases, shared documents, or contaminated training data.
+
+**Verification:** New branch GitHub CI and full-suite execution require independent confirmation. No pretrained dense inference, Ollama generation, external benchmark, or held-out research corpus was executed. Prior branch CI is not evidence that this change passes.
+
+**Commits:** [implementation](https://github.com/Adeen1607/evidenceflip/commit/7d8d2f6fc38ded3c49e2b1f1438c99466e20be0d), [tests](https://github.com/Adeen1607/evidenceflip/commit/36bf57a99f15565ae84c9194c235dd426e384a39), [tutorial](https://github.com/Adeen1607/evidenceflip/commit/ba76bb495b8426bfdf9b06fbec69f1cbe8304732).
+
+**Release gate:** Feature branch only, no main push or Pages change/deployment. Pages branch publishing remains unverified disabled. Do not merge into publishing branch. Public launch requires full 20-day completion, no earlier than November 30, 2026, and explicit owner authorization.
+
+**Next:** Verify CI and repair failures, freeze appropriately licensed held-out relevance labels, and execute an actual BM25/dense comparison with model/license/hardware/latency metadata.
+
 # EvidenceFlip build log
 
 ## 2026-11-19 · Labeled source-level retrieval evaluation (prelaunch)
