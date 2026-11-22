@@ -1,3 +1,17 @@
+## 2026-11-22 · Split-audited retrieval benchmark runner (prelaunch)
+
+**Inspection:** Reviewed the current feature branch's `rag.py`, `labeled_eval.py`, `split_audit.py`, packaging, regression tests and prior build log. Open issues search returned none. Prior scholarship: Lewis RAG, BEIR and RAGAs. Source manifest path still requires explicit inventory confirmation. Prior CI is not evidence of this branch's success.
+
+**Acceptance criteria before implementation:** Reuse fail-closed split audit; validate all test labels before any search; compare named retrievers on identical held-out questions with a common k-chunk budget; compute existing source-level metrics and measured retrieval-only latency; add offline synthetic MIT tests and a runnable tutorial; make no deployment or main push.
+
+**Changes:** Added `benchmark_runner.py`, six synthetic regression tests and [tutorial](BENCHMARK_RUNNER.md). Report distinguishes k chunks from k distinct sources and excludes model loading/indexing latency. Inputs must be licensed and labeled by experiment authors; no actual dense model, LLM or external benchmark is claimed. Time and environment metadata are descriptive, not reproducibility attestation.
+
+**Verification:** Tests committed but local full-suite and GitHub CI are not yet confirmed. Commits: [implementation](https://github.com/Adeen1607/evidenceflip/commit/3abf9521dc8a0df67fa477a2b5a83e48d1f9a365), [tests](https://github.com/Adeen1607/evidenceflip/commit/1c60c9c333ff20d1f783561734ec782ae0d5e82f), [tutorial](https://github.com/Adeen1607/evidenceflip/commit/b42c689c430a384a68438951112fd90848f2a135).
+
+**Release safety:** Feature branch only. Pages branch publishing not verified disabled. No main push, hosting configuration or deployment. Launch no earlier than November 30 after full development and explicit owner authorization.
+
+**Next:** Verify CI and fix failures; inventory `sources/manifest.json`, freeze licensed held-out labels and run actual dense-vs-BM25 experiments with model revision, corpus hash, seed, hardware and indexing costs.
+
 ## 2026-11-20 · Pre-evaluation question split audit (prelaunch)
 
 **Inspection and research:** Inspected draft PR #10, `labeled_eval.py`, its synthetic tests, `pyproject.toml`, prior build log and open issues (none returned). Research framing follows Lewis RAG, BEIR and RAGAs. Existing evaluation checks duplicate questions within one batch but not between development and test partitions. This is a narrow, actionable leakage risk.
