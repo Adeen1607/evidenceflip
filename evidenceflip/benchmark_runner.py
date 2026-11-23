@@ -39,6 +39,11 @@ def run_labeled_benchmark(
         raise ValueError("known_sources must contain nonblank strings")
     if len(set(known_sources)) != len(known_sources):
         raise ValueError("known_sources contains duplicates")
+    # Preflight every adapter before the first search. Otherwise an invalid later
+    # adapter can leave earlier retrievers partially executed and waste resources.
+    for name, retriever in retrievers.items():
+        if not callable(getattr(retriever, "search", None)):
+            raise ValueError(f"Retriever {name!r} must implement search(question, top_k)")
     cases = splits[test_split]
     # Validate labels and question structure before invoking any retriever.
     templates = []
@@ -50,8 +55,6 @@ def run_labeled_benchmark(
 
     results = {}
     for name, retriever in retrievers.items():
-        if not callable(getattr(retriever, "search", None)):
-            raise ValueError("Retriever must implement search(question, top_k)")
         measured = []
         durations = []
         for case in cases:
