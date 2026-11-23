@@ -70,6 +70,35 @@ class BenchmarkRunnerTests(unittest.TestCase):
             run_labeled_benchmark(self.splits, {"mock": Retriever(["fabricated"])},
                                   known_sources=["b"])
 
+    def test_invalid_later_retriever_does_not_run_first(self):
+        first = Retriever(["b"])
+        with self.assertRaisesRegex(ValueError, "broken"):
+            run_labeled_benchmark(
+                self.splits, {"first": first, "broken": object()},
+                known_sources=["b"],
+            )
+        self.assertEqual(first.calls, [])
+
+    def test_noncallable_search_does_not_run_first(self):
+        first = Retriever(["b"])
+        broken = SimpleNamespace(search=None)
+        with self.assertRaisesRegex(ValueError, "broken"):
+            run_labeled_benchmark(
+                self.splits, {"first": first, "broken": broken},
+                known_sources=["b"],
+            )
+        self.assertEqual(first.calls, [])
+
+    def test_valid_adapters_still_execute_in_order(self):
+        first, second = Retriever(["a"]), Retriever(["b"])
+        report = run_labeled_benchmark(
+            self.splits, {"first": first, "second": second},
+            known_sources=["a", "b"], k=1,
+        )
+        self.assertEqual(list(report["retrievers"]), ["first", "second"])
+        self.assertEqual(first.calls, second.calls)
+        self.assertEqual(report["retrievers"]["second"]["metrics"]["hit_rate"], 1)
+
 
 if __name__ == "__main__":
     unittest.main()
