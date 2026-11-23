@@ -1,3 +1,17 @@
+## 2026-11-23 · Benchmark adapter preflight (prelaunch)
+
+**Inspection:** Reviewed benchmark runner, source-level evaluator, split auditor, MIT synthetic source manifest, packaging and existing tests. Open issues search returned none. [Previous benchmark CI run](https://github.com/Adeen1607/evidenceflip/actions/runs/44996580759) succeeded, verifying the parent branch only. Research framing: Lewis et al. RAG, BEIR and RAGAs; retrieval labels are not generation faithfulness.
+
+**Acceptance criteria before implementation:** Reject an invalid adapter anywhere in the named retriever mapping before any query executes; identify the invalid adapter; preserve successful multi-adapter comparisons; add synthetic regression coverage and beginner documentation; do not push to main or change/deploy Pages.
+
+**Implementation:** Preflight checks every adapter's callable search method before the first retrieval call, preventing expensive partial execution when a later adapter is invalid. Added three offline regression cases and documented limitations in [benchmark tutorial](BENCHMARK_RUNNER.md). This is interface validation, not a guarantee that an external model is installed or that a search will succeed.
+
+**Verification:** New branch tests and CI require independent verification. Previous parent branch CI passed as linked above. No actual pretrained dense model, Ollama inference or external held-out benchmark executed in this change. No fabricated scores.
+
+**Release safety:** Feature branch only, no main push, Pages configuration or deployment. Pages branch publishing remains unverified disabled. Do not merge to any publishing branch. Launch no earlier than November 30, 2026, after development completion and explicit owner authorization.
+
+**Next:** Confirm CI, fix regressions, then establish licensed held-out labels and execute real BM25/dense experiments with model revision, corpus digests, seeds, hardware and indexing cost.
+
 ## 2026-11-22 · Split-audited retrieval benchmark runner (prelaunch)
 
 **Inspection:** Reviewed the current feature branch's `rag.py`, `labeled_eval.py`, `split_audit.py`, packaging, regression tests and prior build log. Open issues search returned none. Prior scholarship: Lewis RAG, BEIR and RAGAs. Source manifest path still requires explicit inventory confirmation. Prior CI is not evidence of this branch's success.
